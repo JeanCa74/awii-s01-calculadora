@@ -3,47 +3,139 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Práctica Cisco - Routers y Switches</title>
+<title>practica@ccna — routers y switches</title>
 <style>
   :root {
-    --bg: #0f1420;
-    --card: #1a2233;
-    --card-border: #2c3750;
-    --text: #e8ecf4;
-    --muted: #9aa5b8;
-    --accent: #4f8cff;
-    --good: #35c56a;
-    --bad: #ef5a5a;
-    --mono-bg: #0b0f18;
+    --void: #eef1f6;
+    --panel: #ffffff;
+    --line: #d8dfe8;
+    --ink: #1a212c;
+    --muted: #5b6577;
+    --amber: #b56b00;
+    --amber-ink: #ffffff;
+    --alert: #c23a3a;
+    --good: #1f7a3d;
+    --chrome-red: #ff5f56;
+    --chrome-yellow: #ffbd2e;
+    --chrome-green: #27c93f;
+
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --void: #0b0e14;
+      --panel: #12161f;
+      --line: #262f40;
+      --ink: #e7ebf2;
+      --muted: #8791a3;
+      --amber: #f5a623;
+      --amber-ink: #241800;
+      --alert: #ff7a7a;
+      --good: #5ed68f;
+    }
+  }
+  :root[data-theme="dark"] {
+    --void: #0b0e14;
+    --panel: #12161f;
+    --line: #262f40;
+    --ink: #e7ebf2;
+    --muted: #8791a3;
+    --amber: #f5a623;
+    --amber-ink: #241800;
+    --alert: #ff7a7a;
+    --good: #5ed68f;
+  }
+  :root[data-theme="light"] {
+    --void: #eef1f6;
+    --panel: #ffffff;
+    --line: #d8dfe8;
+    --ink: #1a212c;
+    --muted: #5b6577;
+    --amber: #b56b00;
+    --amber-ink: #ffffff;
+    --alert: #c23a3a;
+    --good: #1f7a3d;
+  }
+
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    font-family: var(--font-sans);
+    background: var(--void);
+    color: var(--ink);
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    padding: 24px 12px 60px;
+    padding: 32px 14px 60px;
   }
-  .app { width: 100%; max-width: 720px; }
-  h1 { font-size: 1.4rem; margin: 0 0 4px; }
-  .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+  .app { width: 100%; max-width: 700px; }
+
+  /* --- terminal window chrome --- */
+  .window {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--panel);
+    box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  }
+  .titlebar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--void);
+    border-bottom: 1px solid var(--line);
+  }
+  .dots { display: flex; gap: 7px; flex-shrink: 0; }
+  .dots span { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .dots .r { background: var(--chrome-red); }
+  .dots .y { background: var(--chrome-yellow); }
+  .dots .g { background: var(--chrome-green); }
+  .titletext {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    letter-spacing: .01em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    text-align: center;
+  }
+
+  .content { padding: 22px 22px 24px; }
+
+  h1 {
+    font-family: var(--font-mono);
+    font-size: clamp(1.05rem, 3.4vw, 1.3rem);
+    font-weight: 600;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  h1 .prompt-glyph { color: var(--amber); }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 22px;
+    max-width: 56ch;
+  }
 
   .topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 14px;
+    margin-bottom: 18px;
     flex-wrap: wrap;
   }
   .progress-wrap { flex: 1; min-width: 180px; }
   .progress-track {
-    background: var(--card-border);
-    border-radius: 999px;
-    height: 8px;
+    background: var(--void);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    height: 9px;
     overflow: hidden;
   }
   .progress-fill {
@@ -52,58 +144,101 @@
     width: 0%;
     transition: width .25s ease;
   }
-  .progress-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+  .progress-label {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.76rem;
+    color: var(--muted);
+    margin-top: 6px;
+  }
 
   select, button {
     font: inherit;
-    border-radius: 8px;
-    border: 1px solid var(--card-border);
-    background: var(--card);
-    color: var(--text);
+    font-family: var(--font-sans);
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--ink);
     padding: 8px 12px;
     cursor: pointer;
   }
-  button:hover { border-color: var(--accent); }
-  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+  select:focus-visible, button:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+  }
+  button:hover { border-color: var(--amber); }
+  button.primary { background: var(--amber); border-color: var(--amber); color: var(--amber-ink); font-weight: 600; }
   button.ghost { background: transparent; }
   button:disabled { opacity: .4; cursor: default; }
 
   .card {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 20px 22px;
+    background: var(--void);
   }
-  .card-index { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
-  .question { font-size: 1.15rem; font-weight: 600; line-height: 1.4; margin-bottom: 18px; }
+  .card-index {
+    font-family: var(--font-mono);
+    color: var(--muted);
+    font-size: 0.76rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .prompt-line {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--amber);
+    margin-bottom: 10px;
+  }
+  .prompt-line .cursor {
+    display: inline-block;
+    width: 7px;
+    height: 1em;
+    background: var(--amber);
+    vertical-align: text-bottom;
+    margin-left: 2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .prompt-line .cursor { animation: none; }
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .question { font-size: 1.1rem; font-weight: 600; line-height: 1.45; margin-bottom: 18px; text-wrap: balance; }
 
   .answer {
     display: none;
     margin-top: 14px;
-    border-top: 1px dashed var(--card-border);
+    border-top: 1px dashed var(--line);
     padding-top: 16px;
   }
   .answer.show { display: block; }
   .answer h4 {
-    margin: 0 0 6px;
-    font-size: 0.8rem;
+    margin: 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: .04em;
+    letter-spacing: .08em;
     color: var(--muted);
   }
   pre.cmd {
-    background: var(--mono-bg);
-    border: 1px solid var(--card-border);
+    background: #0a0e14;
+    border: 1px solid #232c3d;
     border-radius: 8px;
-    padding: 12px 14px;
+    padding: 13px 15px;
     overflow-x: auto;
-    font-size: 0.88rem;
-    line-height: 1.5;
-    color: #b9f6c8;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #7ee787;
     white-space: pre-wrap;
-    margin: 0 0 12px;
+    margin: 0 0 14px;
   }
-  .tip { font-size: 0.9rem; color: var(--muted); line-height: 1.45; }
+  .tip { font-size: 0.92rem; color: var(--muted); line-height: 1.55; max-width: 60ch; }
 
   .actions {
     display: flex;
@@ -111,10 +246,10 @@
     margin-top: 20px;
     flex-wrap: wrap;
   }
-  .rate-actions { display: none; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .rate-actions { display: none; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
   .rate-actions.show { display: flex; }
   .rate-actions button.good { border-color: var(--good); color: var(--good); }
-  .rate-actions button.bad { border-color: var(--bad); color: var(--bad); }
+  .rate-actions button.bad { border-color: var(--alert); color: var(--alert); }
 
   .nav {
     display: flex;
@@ -123,153 +258,174 @@
     gap: 10px;
   }
 
-  .footer-controls {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 24px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
   .badge {
     display: inline-block;
-    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
     padding: 2px 8px;
     border-radius: 999px;
-    margin-left: 8px;
-    vertical-align: middle;
+    border: 1px solid transparent;
   }
-  .badge.mastered { background: rgba(53,197,106,.15); color: var(--good); }
-  .badge.pending { background: rgba(239,90,90,.12); color: var(--bad); }
+  .badge.mastered { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+  .badge.pending { background: color-mix(in srgb, var(--alert) 12%, transparent); color: var(--alert); border-color: color-mix(in srgb, var(--alert) 30%, transparent); }
 
-  .done-screen { text-align: center; padding: 40px 10px; }
-  .done-screen .big { font-size: 2.2rem; margin-bottom: 8px; }
+  .done-screen { text-align: center; padding: 44px 10px; }
+  .done-screen .big { font-family: var(--font-mono); font-size: 1.8rem; margin-bottom: 10px; color: var(--good); }
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>Práctica: Configuración de Routers y Switches</h1>
-  <div class="subtitle">20 criterios de la rúbrica · repasa el comando exacto antes de tu práctica en equipos reales</div>
-
-  <div class="topbar">
-    <div class="progress-wrap">
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="progress-label" id="progressLabel">0 / 20 dominados</div>
+  <div class="window">
+    <div class="titlebar">
+      <div class="dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+      <div class="titletext">practica@ccna: ~/rubrica-routers-switches — 20 criterios</div>
+      <div style="width:39px"></div>
     </div>
-    <select id="modeSelect">
-      <option value="orden">Orden de la rúbrica</option>
-      <option value="aleatorio">Orden aleatorio</option>
-      <option value="pendientes">Solo pendientes</option>
-    </select>
-    <button class="ghost" id="resetBtn" title="Borra tu progreso guardado">Reiniciar progreso</button>
-  </div>
+    <div class="content">
+      <h1><span class="prompt-glyph">&gt;</span> Práctica: configuración de routers y switches</h1>
+      <div class="subtitle">20 criterios de la rúbrica, uno por tarjeta. Revisa el prompt de CLI donde se ejecuta cada comando antes de tu práctica en equipos reales.</div>
 
-  <div class="card" id="cardArea"></div>
+      <div class="topbar">
+        <div class="progress-wrap">
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+          <div class="progress-label" id="progressLabel">00 / 20 dominados</div>
+        </div>
+        <select id="modeSelect">
+          <option value="orden">Orden de la rúbrica</option>
+          <option value="aleatorio">Orden aleatorio</option>
+          <option value="pendientes">Solo pendientes</option>
+        </select>
+        <button class="ghost" id="resetBtn" title="Borra tu progreso guardado">Reiniciar progreso</button>
+      </div>
 
-  <div class="nav">
-    <button id="prevBtn">← Anterior</button>
-    <button id="nextBtn">Siguiente →</button>
+      <div class="card" id="cardArea"></div>
+
+      <div class="nav">
+        <button id="prevBtn">&larr; Anterior</button>
+        <button id="nextBtn">Siguiente &rarr;</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 const CRITERIOS = [
   {
+    prompt: "Router#",
     q: "¿Coloca correctamente los cables seriales?",
     cmd: "show controllers serial 0/0/0\n! Busca la línea \"DCE cable\" o \"DTE cable\"\n! El extremo DCE es el que da el reloj",
     tip: "El cable serial tiene un extremo DCE (hembra, da el reloj) y uno DTE (macho). Conecta el DCE al router que configurarás con 'clock rate'. Verifícalo con show controllers antes de armar la topología."
   },
   {
+    prompt: "Router con0 is now available >",
     q: "¿Se conecta vía consola?",
     cmd: "! Cable de consola (rollover/USB) al puerto CONSOLE\n! Configuración del terminal (PuTTY / Tera Term):\n! 9600 baudios, 8 bits de datos, sin paridad,\n! 1 bit de parada, sin control de flujo",
     tip: "Conecta el cable de consola del PC al puerto Console del equipo, abre PuTTY/Tera Term en modo Serial con esos parámetros (9600-8-N-1)."
   },
   {
+    prompt: "Router(config)#",
     q: "¿Configura la seguridad?",
     cmd: "enable\nconfigure terminal\n enable secret class\n line console 0\n  password cisco\n  login\n exit\n line vty 0 4\n  password cisco\n  login\n exit\n service password-encryption",
     tip: "enable secret protege el modo privilegiado; line console/vty piden password para entrar por consola y por Telnet/SSH; service password-encryption cifra las contraseñas en texto plano de la config."
   },
   {
+    prompt: "Router(config)#",
     q: "¿Configura el hostname?",
     cmd: "configure terminal\n hostname R1",
     tip: "Cambia el nombre por defecto (Router/Switch) por el nombre que pide la topología (ej. R1, SW1)."
   },
   {
+    prompt: "Router(config-if)#",
     q: "¿Configura las IPs en las interfaces?",
     cmd: "configure terminal\n interface g0/0\n  ip address 192.168.1.1 255.255.255.0\n  no shutdown\n exit",
     tip: "Toda interfaz activa necesita ip address <ip> <máscara> y no shutdown (las interfaces de router inician apagadas por defecto)."
   },
   {
+    prompt: "Router(config-if)#",
     q: "¿Configura correctamente el DCE?",
     cmd: "interface serial0/0/0\n clock rate 64000\n no shutdown",
     tip: "El 'clock rate' SOLO se configura en el extremo DCE del cable serial (nunca en el DTE). Sin esto el enlace serial no levanta línea."
   },
   {
+    prompt: "Router#",
     q: "¿Guarda la configuración?",
     cmd: "end\ncopy running-config startup-config\n! atajo: wr",
     tip: "Guarda la running-config en la NVRAM (startup-config) para que sobreviva a un reinicio."
   },
   {
+    prompt: "Router(config)#",
     q: "¿Configura el enrutamiento estático clásico?",
     cmd: "configure terminal\n ip route 192.168.2.0 255.255.255.0 10.0.0.2",
     tip: "Sintaxis: ip route <red destino> <máscara> <IP del siguiente salto | interfaz de salida>. Uno por cada red remota que no está conectada directamente."
   },
   {
+    prompt: "Router(config)#",
     q: "¿Configura el enrutamiento estático por defecto?",
     cmd: "configure terminal\n ip route 0.0.0.0 0.0.0.0 10.0.0.2",
     tip: "La ruta 'gateway of last resort': red y máscara en ceros, apuntando al siguiente salto o interfaz de salida hacia el resto de Internet/red no conocida."
   },
   {
+    prompt: "Router(config-router)#",
     q: "¿Configura el enrutamiento dinámico?",
     cmd: "! OSPF\nrouter ospf 1\n network 192.168.1.0 0.0.0.255 area 0\n\n! EIGRP\nrouter eigrp 10\n network 192.168.1.0 0.0.0.255\n no auto-summary\n\n! RIP v2\nrouter rip\n version 2\n network 192.168.1.0\n no auto-summary",
     tip: "Elige el protocolo que pida la guía (RIP, EIGRP u OSPF), entra en su modo de configuración y anuncia las redes conectadas con 'network'."
   },
   {
+    prompt: "Router#",
     q: "¿Comprueba las rutas?",
     cmd: "show ip route\nshow ip route static\nshow ip protocols",
     tip: "show ip route te muestra la tabla de enrutamiento completa; identifica las rutas con 'S' (estática), 'S*' (por defecto), 'O'/'D'/'R' (dinámicas)."
   },
   {
+    prompt: "Switch(config-vlan)#",
     q: "¿Configura las VLANs?",
     cmd: "configure terminal\n vlan 10\n  name VENTAS\n exit\n interface fa0/1\n  switchport mode access\n  switchport access vlan 10",
     tip: "Primero crea la VLAN en la base de datos del switch (vlan <id>, name), luego asigna los puertos de acceso a esa VLAN."
   },
   {
+    prompt: "Switch#",
     q: "¿Comprueba las VLANs?",
     cmd: "show vlan brief\nshow interfaces status",
     tip: "show vlan brief lista las VLANs creadas y qué puertos pertenecen a cada una."
   },
   {
+    prompt: "Switch(config-if)#",
     q: "¿Configura enlace troncal?",
     cmd: "configure terminal\n interface fa0/24\n  switchport mode trunk\n  switchport trunk allowed vlan 10,20,30\n  switchport trunk native vlan 99",
     tip: "El puerto que conecta switch-switch o switch-router debe estar en modo trunk para llevar el tráfico de varias VLANs etiquetado con 802.1Q."
   },
   {
+    prompt: "Router(config-subif)#",
     q: "¿Configura Inter-VLANs?",
     cmd: "! Router-on-a-stick\ninterface g0/0.10\n encapsulation dot1Q 10\n ip address 192.168.10.1 255.255.255.0\ninterface g0/0.20\n encapsulation dot1Q 20\n ip address 192.168.20.1 255.255.255.0\ninterface g0/0\n no shutdown",
     tip: "Crea una subinterfaz por VLAN en el router, con 'encapsulation dot1Q <vlan>' y su IP (gateway de esa VLAN). La interfaz física solo necesita no shutdown."
   },
   {
+    prompt: "Router(config)#",
     q: "¿Configura ACL estándar?",
     cmd: "configure terminal\n access-list 1 permit 192.168.10.0 0.0.0.255\n access-list 1 deny any\n interface g0/1\n  ip access-group 1 out",
     tip: "Las ACL estándar (1-99 o nombradas) solo filtran por IP origen. Recuerda el 'deny any' implícito al final de toda ACL."
   },
   {
+    prompt: "Router(config-if)#",
     q: "¿Coloca correctamente las ACLs estándar?",
     cmd: "! Se aplica lo más cerca posible del DESTINO",
     tip: "Como solo filtran por origen, si la colocas cerca del origen bloquearías ese tráfico para TODOS los destinos. Por eso va cerca del destino que quieres proteger."
   },
   {
+    prompt: "Router(config)#",
     q: "¿Configura ACL extendidas?",
     cmd: "configure terminal\n access-list 100 permit tcp 192.168.10.0 0.0.0.255 192.168.20.0 0.0.0.255 eq 80\n access-list 100 deny ip any any\n interface g0/0\n  ip access-group 100 in",
     tip: "Las ACL extendidas (100-199 o nombradas) filtran por IP origen, IP destino, protocolo y puerto — mucho más granular que la estándar."
   },
   {
+    prompt: "Router(config-if)#",
     q: "¿Coloca correctamente las ACLs extendidas?",
     cmd: "! Se aplica lo más cerca posible del ORIGEN",
     tip: "Como ya pueden filtrar por destino y puerto, conviene bloquear el tráfico no deseado lo antes posible (cerca del origen) para no desperdiciar ancho de banda de la red."
   },
   {
+    prompt: "Router#",
     q: "¿Comprueba las ACLs?",
     cmd: "show access-lists\nshow ip interface g0/0\n! (muestra qué ACL está aplicada y en qué sentido)",
     tip: "show access-lists muestra los matches (aciertos) por línea; show ip interface indica qué ACL entrante/saliente tiene cada interfaz."
@@ -280,7 +436,6 @@ const STORAGE_KEY = "cisco-practica-progreso-v1";
 let mastered = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
 let order = CRITERIOS.map((_, i) => i);
 let pos = 0;
-let answerShown = false;
 
 const cardArea = document.getElementById("cardArea");
 const prevBtn = document.getElementById("prevBtn");
@@ -303,6 +458,8 @@ function shuffle(arr) {
   return a;
 }
 
+function pad2(n) { return String(n).padStart(2, "0"); }
+
 function buildOrder() {
   const mode = modeSelect.value;
   const all = CRITERIOS.map((_, i) => i);
@@ -315,7 +472,7 @@ function buildOrder() {
 function updateProgress() {
   const count = Object.values(mastered).filter(Boolean).length;
   progressFill.style.width = (count / CRITERIOS.length * 100) + "%";
-  progressLabel.textContent = `${count} / ${CRITERIOS.length} dominados`;
+  progressLabel.textContent = `${pad2(count)} / ${CRITERIOS.length} dominados`;
 }
 
 function render() {
@@ -323,8 +480,8 @@ function render() {
 
   if (order.length === 0) {
     cardArea.innerHTML = `<div class="done-screen">
-      <div class="big">🎉</div>
-      <div>¡Ya dominas todos los criterios pendientes!<br>Cambia el modo para repasar de nuevo.</div>
+      <div class="big">$ status: complete</div>
+      <div class="tip">Ya dominas todos los criterios pendientes.<br>Cambia el modo para repasar de nuevo.</div>
     </div>`;
     prevBtn.disabled = true;
     nextBtn.disabled = true;
@@ -339,9 +496,10 @@ function render() {
   const isMastered = !!mastered[idx];
 
   cardArea.innerHTML = `
-    <div class="card-index">Criterio ${idx + 1} de 20 &middot; tarjeta ${pos + 1}/${order.length}
+    <div class="card-index">Criterio ${pad2(idx + 1)}/20 &middot; tarjeta ${pos + 1}/${order.length}
       <span class="badge ${isMastered ? "mastered" : "pending"}">${isMastered ? "dominado" : "pendiente"}</span>
     </div>
+    <div class="prompt-line">${item.prompt}<span class="cursor"></span></div>
     <div class="question">${item.q}</div>
     <div class="actions">
       <button class="primary" id="showBtn">Ver respuesta</button>
@@ -352,17 +510,15 @@ function render() {
       <h4>Por qué</h4>
       <div class="tip">${item.tip}</div>
       <div class="rate-actions" id="rateActions">
-        <button class="good" id="goodBtn">✔ Lo sabía</button>
-        <button class="bad" id="badBtn">✘ Repasar de nuevo</button>
+        <button class="good" id="goodBtn">&check; Lo sabía</button>
+        <button class="bad" id="badBtn">&cross; Repasar de nuevo</button>
       </div>
     </div>
   `;
 
-  answerShown = false;
   document.getElementById("showBtn").onclick = () => {
     document.getElementById("answerBox").classList.add("show");
     document.getElementById("rateActions").classList.add("show");
-    answerShown = true;
   };
   document.getElementById("goodBtn").onclick = () => {
     mastered[idx] = true;
